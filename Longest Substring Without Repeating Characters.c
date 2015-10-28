@@ -1,27 +1,18 @@
-class Solution {
-public:
-    int lengthOfLongestSubstring(string s) {
-        int answer=0;
-        int maxLength=0;
-        map<char, int> hashTable;
-        hashTable.clear();
-        if(s.size()==0) return 0;
-        for(int i=0;i<s.size();i++){
-            if(hashTable.find(s[i])==hashTable.end()){
-                answer++;
-                hashTable.insert(pair<char, int>(s[i], i));
-            }
-            else{
-                if(maxLength<answer) maxLength=answer;
-                while(hashTable[s[i+1]]==hashTable[s[i]]+1){
-                    i++;
-                }
-                i=hashTable[s[i]];
-                hashTable.clear();
-                answer=0;
-            };
+int lengthOfLongestSubstring(char* s) {
+    if (s==NULL) return 0;
+    int length = 0;
+    int i, j;
+    int pos[1000] = {0};
+    int start = 0;
+    int currentL = 0;
+    for (i=0; i<strlen(s); i++) {
+        if (pos[s[i]]>start) {
+            length = length>currentL? length:currentL;
+            start = pos[s[i]];
+            currentL = i - pos[s[i]];
         }
-        if(maxLength<answer) maxLength=answer;
-        return maxLength;
+        pos[s[i]] = i+1;
+        currentL++;
     }
-};
+    return length>currentL? length:currentL;
+}

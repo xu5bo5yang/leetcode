@@ -1,73 +1,74 @@
-class Solution {
-public:
-    int even(int x){
-        if(2*(x/2)==x) return 1;
-        else return 0;
+double findMedianSortedArrays(int* nums1, int nums1Size, int* nums2, int nums2Size) {
+    if (nums1Size > nums2Size) return findMedianSortedArrays(nums2, nums2Size, nums1, nums1Size);
+    if (nums1Size == 0) {
+        if (nums2Size == 0) return 0;
+        else if (nums2Size%2==1) return nums2[nums2Size/2];
+        else return (nums2[nums2Size/2-1]+nums2[nums2Size/2])/2.0;
     }
-
-    double findMedianSortedArrays(int A[], int m, int B[], int n) {
-	    int ai=0,bj=0;
-	    int temp=0;
-	    if(m==0&&n==0) return 0;
-	    else if(m==0){
-    	    if(even(n)) return (B[n/2]+B[n/2-1])/2.0;
-    	    else return B[n/2];
-    	}
-    	else if(n==0){
-    	    if(even(m)) return (A[m/2]+A[m/2-1])/2.0;
-    	    else return A[m/2];
-    	}
-    	if(even(m+n)){
-    		while((ai+bj)<=((m+n)/2-1)){
-    			if(ai==m){
-    			    temp=B[bj];
-    			    bj++;
-    			}
-    			else if(bj==n){
-    			    temp=A[ai];
-    			    ai++;
-    			}
-    			else{
-    				if(A[ai]>=B[bj]){
-    					temp=B[bj];
-    					bj++;
-    				}
-    				else{
-    					temp=A[ai];
-    					ai++;
-    				}
-    			}
-    		}
-    		if(ai==m) return (B[bj]+temp)/2.0;
-    		else if(bj==n) return (A[ai]+temp)/2.0;
-    		else if(A[ai]<=B[bj]) return (A[ai]+temp)/2.0;
-    		else return (B[bj]+temp)/2.0;
-    	}
-    	else{
-    		while((ai+bj)<((m+n-1)/2)){
-    			if(ai==m){
-    			    temp=B[bj];
-    			    bj++;
-    			}
-    			else if(bj==n){
-    			    temp=A[ai];
-    			    ai++;
-    			}
-    			else{
-    				if(A[ai]>=B[bj]){
-    					temp=B[bj];
-    					bj++;
-    				}
-    				else{
-    					temp=A[ai];
-    					ai++;
-    				}
-    			}
-    		}
-    		if(ai==m) return B[bj];
-    		else if(bj==n) return A[ai];
-    		else if(A[ai]<=B[bj]) return A[ai];
-    		else return B[bj];
-    	}
+    else if (nums1Size == 1) {
+        if (nums2Size == 1) return (nums1[0]+nums2[0])/2.0;
+        if (nums2Size%2 == 1) {
+            int mid = nums2Size / 2;
+            if (nums1[0] <= nums2[mid - 1])
+                return (nums2[mid - 1] + nums2[mid]) / 2.0;
+            else if (nums1[0] > nums2[mid + 1])
+                return (nums2[mid] + nums2[mid + 1]) / 2.0;
+            else
+                return (nums2[mid] + nums1[0]) / 2.0;
+        }
+        else {
+            int leftmid = nums2Size / 2 - 1, rightmid = nums2Size / 2;
+            if (nums1[0] <= nums2[leftmid])
+                return nums2[leftmid];
+            else if (nums1[0] > nums2[rightmid])
+                return nums2[rightmid];
+            else
+                return nums1[0];
+        }
     }
-};
+    else if (nums1Size%2 == 0) {
+        if (nums2Size%2 == 1) {
+            int nums2mid = nums2Size / 2;
+            int nums1leftmid = nums1Size / 2 - 1;
+            int nums1rightmid = nums1Size / 2;
+            if (nums2[nums2mid] <= nums1[nums1leftmid])
+                return findMedianSortedArrays(nums2 + nums1Size / 2, nums2Size - nums1Size / 2, nums1, nums1Size / 2);
+            else if (nums2[nums2mid] > nums1[nums1rightmid])
+                return findMedianSortedArrays(nums2, nums2Size - nums1Size / 2, nums1 + nums1Size / 2, nums1Size / 2);
+            else
+                return nums2[nums2mid];
+        }
+        else {
+            int nums1leftmid = nums1Size / 2 - 1, nums1rightmid = nums1Size / 2;
+            int nums2leftmid = nums2Size / 2 - 1, nums2rightmid = nums2Size / 2;
+            if (nums1[nums1leftmid] > nums2[nums2leftmid] && nums1[nums1rightmid] > nums2[nums2rightmid])
+                return findMedianSortedArrays(nums1, nums1Size / 2, nums2 + nums1Size / 2, nums2Size - nums1Size / 2);
+            else if (nums1[nums1leftmid] <= nums2[nums2leftmid] && nums1[nums1rightmid] <= nums2[nums2rightmid])
+                return findMedianSortedArrays(nums1 + nums1Size / 2, nums1Size / 2, nums2, nums2Size - nums1Size / 2);
+            else if (nums1[nums1leftmid] > nums2[nums2leftmid] && nums1[nums1rightmid] <= nums2[nums2rightmid])
+                return (nums1[nums1leftmid] + nums1[nums1rightmid]) / 2.0;
+            else
+                return (nums2[nums2leftmid] + nums2[nums2rightmid]) / 2.0;
+        }
+    }
+    else {
+        if (nums2Size%2 == 0) {
+            int nums1mid = nums1Size / 2;
+            int nums2leftmid = nums2Size / 2 - 1, nums2rightmid = nums2Size / 2;
+            if (nums1[nums1mid] <= nums2[nums2leftmid])
+                return findMedianSortedArrays(nums1 + nums1mid + 1, nums1Size / 2, nums2, nums2Size - nums1Size / 2 - 1);
+            else if (nums1[nums1mid] > nums2[nums2rightmid])
+                return findMedianSortedArrays(nums1, nums1Size / 2, nums2 + nums1Size / 2 + 1, nums2Size - nums1Size / 2 - 1);
+            else
+                return nums1[nums1mid];
+        }
+        else {
+            int nums1mid = nums1Size / 2;
+            int nums2mid = nums2Size / 2;
+            if (nums1[nums1mid] < nums2[nums2mid])
+                return findMedianSortedArrays(nums1 + nums1Size / 2, nums1Size / 2 + 1, nums2, nums2Size - nums1Size / 2);
+            else 
+                return findMedianSortedArrays(nums1, nums1Size / 2 + 1, nums2 + nums1Size / 2, nums2Size - nums1Size / 2);
+        }
+    }
+}
