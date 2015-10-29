@@ -4,7 +4,7 @@ void table(int* t, int length, char* needle) {
     int pos = 2;
     int next = 0;
     while (pos < length) {
-        if (needle[pos-1] == needle[next]) {
+        if (needle[next] == needle[pos-1]) {
             next++;
             t[pos] = next;
             pos++;
